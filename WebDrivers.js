@@ -23,25 +23,25 @@ import { sleep, check } from "k6";
 // }
 
 const progressiveTest = [
-    {"duration": "1m 30s", "target": 3},
-    {"duration": "1m", "target": 20},
-    {"duration": "1m 30s", "target": 3}
+    {"duration": "90s", "target": 3},
+    {"duration": "1m", "target": 10},
+    {"duration": "90s", "target": 3}
 ];
 
 const dramaticSustainedTest = [
-    {"duration": "30s", "target": 5},
-    {"duration": "1m", "target": 20},
-    {"duration": "30s", "target": 5},
-    {"duration": "1m", "target": 20},
-    {"duration": "30s", "target": 5}
+    {"duration": "30s", "target": 2},
+    {"duration": "1m", "target": 10},
+    {"duration": "30s", "target": 2},
+    {"duration": "1m", "target": 10},
+    {"duration": "30s", "target": 2}
 ];
 
 const periodicTest = [
-    {"duration": "1m", "target": 10},
-    {"duration": "30s", "target": 18},
-    {"duration": "1m", "target": 10},
-    {"duration": "30s", "target": 18},
-    {"duration": "1m", "target": 10}
+    {"duration": "1m", "target": 5},
+    {"duration": "30s", "target": 9},
+    {"duration": "1m", "target": 5},
+    {"duration": "30s", "target": 9},
+    {"duration": "1m", "target": 5}
 ];
 
 const performanceTests = {
@@ -52,20 +52,21 @@ const performanceTests = {
 
 // Select the type of test ("Progressive", "Dramatic Sustained" or "Periodic")
 
-const route = "cpu";
-const test = "Progressive";
+const link = "web-alb-1658970598.us-east-1.elb.amazonaws.com";
+const route = "CPU";
+const test = "Periodic";
 
 export const options = {
     stages: performanceTests[test],
     cloud: {
         projectID: 3721358,
-        name: test + " Test"
+        name: test + " " + route + " Test"
     }
 }
 
 export default function() {
     
-    const result = http.get("http://web-alb-1744507617.us-east-1.elb.amazonaws.com/stress/cpu");
+    const result = http.get("http://" + link + "/stress/" + route.toLowerCase());
     
     check(result, {
         "Successful Requests": (response) => (response.status == 200),
